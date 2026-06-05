@@ -19,14 +19,15 @@ base_url = st.text_input("Backend URL", "https://ai-hospital-appointment-voice-a
 
 
 
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs(
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs(
     [
         "Book Appointment",
         "Check Availability",
         "Reschedule",
         "Cancel",
         "List Appointments",
-        "History"
+        "History",
+        "Shifa Assistant"
     ]
 )
 
@@ -257,3 +258,76 @@ with tab6:
             st.dataframe(data)
         else:
             st.info("No past appointments found.")
+
+with tab7:
+
+    st.header("Shifa AI Assistant")
+
+    st.write("Use your Vapi Assistant ID and Public Key to connect Shifa directly from this frontend.")
+
+    # Use internal Vapi credentials (not entered by the user)
+    # Replace these with secure retrieval (e.g., environment variables) as needed
+    vapi_assistant_id = "aa9c10da-7172-4846-92e9-f09e234ccff6"
+    vapi_public_key = "82442028-3271-4550-8c58-d984617b36a3"
+
+    shifa_message = st.text_area(
+        "Message to Shifa",
+        "",
+        height=150
+    )
+
+    # Button to send message manually
+    if st.button("Send to Shifa", key="shifa_send"):
+
+        if not shifa_message.strip():
+            st.warning("Please enter a message for Shifa.")
+        elif not vapi_assistant_id.strip() or not vapi_public_key.strip():
+            st.warning("Please enter your Vapi Assistant ID and Public Key.")
+        else:
+            payload = {
+                "message": shifa_message,
+                "assistant_id": vapi_assistant_id,
+                "public_key": vapi_public_key
+            }
+
+            response = requests.post(
+                f"{base_url}/shifa_agent/",
+                json=payload
+            )
+
+            if response.status_code == 200:
+                reply = response.json().get("reply")
+                if reply:
+                    st.success("Shifa says:")
+                    st.write(reply)
+                else:
+                    st.info(response.json())
+            else:
+                st.error(response.text)
+    # Additional button labeled "Logo" which also sends the same payload when clicked
+    if st.button("Logo", key="logo_button"):
+        if not shifa_message.strip():
+            st.warning("Please enter a message for Shifa.")
+        else:
+            payload = {
+                "message": shifa_message,
+                "assistant_id": vapi_assistant_id,
+                "public_key": vapi_public_key
+            }
+
+            response = requests.post(
+                f"{base_url}/shifa_agent/",
+                json=payload
+            )
+
+            if response.status_code == 200:
+                reply = response.json().get("reply")
+                if reply:
+                    st.success("Shifa says:")
+                    st.write(reply)
+                else:
+                    st.info(response.json())
+            else:
+                st.error(response.text)
+
+
