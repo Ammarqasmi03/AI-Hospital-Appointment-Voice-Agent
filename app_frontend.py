@@ -10,7 +10,7 @@ st.set_page_config(
 
 st.title("🏥 Hospital Appointment System")
 
-base_url = st.text_input("Backend URL", "http://localhost:8000").rstrip("/")
+base_url = st.text_input("Backend URL", "https://ai-hospital-appointment-voice-agent.onrender.com").rstrip("/")
 
 # patient_name = st.text_input("Patient Name")
 # reason = st.text_input("Reason for Appointment")
