@@ -241,12 +241,13 @@ def call_shifa(request: CallRequest):
         json=payload
     )
 
-    if response.status_code != 200:
+    if response.status_code not in [200,201]:
         return {
             "error": response.text,
             "status": response.status_code
         }
 
+    print("Vapi Response:",response.text)
     return response.json()
 
 
