@@ -60,7 +60,7 @@ class CallRequest(BaseModel):
 
 # Step2: Create FastAPI app and endpoints pseudo code
 
-from fastapi import FastAPI, Depends, HTTPException, requests
+from fastapi import FastAPI, Depends, HTTPException
 
 app = FastAPI()
 
@@ -215,6 +215,7 @@ def appointment_history(db: Session = Depends(get_db)):
 
 
 import os
+import requests
 
 VAPI_API_KEY = os.getenv("799aadec-0f84-4b4a-9a0a-7cb86bd01657")
     
