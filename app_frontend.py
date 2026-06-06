@@ -263,52 +263,27 @@ with tab6:
 
 
 with tab7:
-    st.header("🎙️ Shifa AI Voice Assistant")
+    st.header("🎙️ Call Shifa AI")
 
-    st.success("Talk directly with Shifa AI by phone.")
-
-    st.markdown("""
-    ### How to Use
-
-    1. Call the number below.
-    2. Wait for Shifa AI to answer.
-    3. Speak naturally.
-    4. You can:
-       - Book appointments
-       - Check doctor availability
-       - Reschedule appointments
-       - Cancel appointments
-    """)
-
-    st.info("📞 Shifa AI Number: +1 (209) 880-3382")
-
-    st.markdown("""
-    ### Example Commands
-
-    • Book an appointment with Dr. Sharma tomorrow at 10 AM.
-
-    • Check availability of Dr. Khan on Monday.
-
-    • Reschedule my appointment to 3 PM.
-
-    • Cancel my appointment for tomorrow.
-    """)
-
-    st.markdown(
-        """
-        <a href="tel:+12098803382">
-            <button style="
-                background-color:#4CAF50;
-                color:white;
-                padding:15px 30px;
-                border:none;
-                border-radius:10px;
-                font-size:18px;
-                cursor:pointer;">
-                📞 Call Shifa AI
-            </button>
-        </a>
-        """,
-        unsafe_allow_html=True
+    phone_number = st.text_input(
+        "Enter your phone number",
+        placeholder="+919876543210"
     )
 
+    if st.button("📞 Connect Me to Shifa AI"):
+
+        payload = {
+            "phone_number": phone_number
+        }
+
+        response = requests.post(
+            f"{base_url}/call_shifa/",
+            json=payload
+        )
+
+        if response.status_code == 200:
+            st.success(
+                "You will receive a call from Shifa AI shortly."
+            )
+        else:
+            st.error(response.text)

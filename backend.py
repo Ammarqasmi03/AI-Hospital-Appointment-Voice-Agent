@@ -55,9 +55,12 @@ class checkAvailabilityResponse(BaseModel):
 class ListAppointmentsRequest(BaseModel):
     date : dt.date
 
+class CallRequest(BaseModel):
+    phone_number: str
+
 # Step2: Create FastAPI app and endpoints pseudo code
 
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, requests
 
 app = FastAPI()
 
@@ -209,7 +212,36 @@ def appointment_history(db: Session = Depends(get_db)):
     )
 
     return appointments
+
+
+import os
+
+VAPI_API_KEY = os.getenv("799aadec-0f84-4b4a-9a0a-7cb86bd01657")
     
+@app.post("/call_shifa/")
+def call_shifa(request: CallRequest):
+
+    headers = {
+        "Authorization": f"Bearer {VAPI_API_KEY}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "assistantId": "aa9c10da-7172-4846-92e9-f09e234ccff6",
+        "phoneNumberId": "69129286-91ce-47de-8410-25bcfcd3e0a7",
+        "customer": {
+            "number": request.phone_number
+        }
+    }
+
+    response = requests.post(
+        "https://api.vapi.ai/call",
+        headers=headers,
+        json=payload
+    )
+
+    return response.json()
+
 
 
 import uvicorn
