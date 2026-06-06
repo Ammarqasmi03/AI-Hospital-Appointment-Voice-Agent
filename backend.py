@@ -217,11 +217,15 @@ def appointment_history(db: Session = Depends(get_db)):
 import os
 import requests
 
-VAPI_API_KEY = os.getenv("799aadec-0f84-4b4a-9a0a-7cb86bd01657")
+VAPI_API_KEY = os.getenv("VAPI_API_KEY")
     
 @app.post("/call_shifa/")
 def call_shifa(request: CallRequest):
 
+    if VAPI_API_KEY:
+        print("VAPI_API_KEY starts with:", VAPI_API_KEY[:10])
+    else:
+        print("VAPI_API_KEY is None")
     headers = {
         "Authorization": f"Bearer {VAPI_API_KEY}",
         "Content-Type": "application/json"
