@@ -259,20 +259,45 @@ with tab6:
         else:
             st.info("No past appointments found.")
 
-import streamlit as st
-import streamlit.components.v1 as components
+
+
 
 with tab7:
-    st.header("🎙️ Shifa AI Assistant")
+    st.header("🎙️ Shifa AI Voice Assistant")
 
-    assistant_id = "aa9c10da-7172-4846-92e9-f09e234ccff6"
-    public_key = "82442028-3271-4550-8c58-d984617b36a3"
+    st.success("Talk directly with Shifa AI by phone.")
 
-    html_code = f"""
-    <script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web/dist/index.js"></script>
+    st.markdown("""
+    ### How to Use
 
-    <button id="callBtn"
-            style="
+    1. Call the number below.
+    2. Wait for Shifa AI to answer.
+    3. Speak naturally.
+    4. You can:
+       - Book appointments
+       - Check doctor availability
+       - Reschedule appointments
+       - Cancel appointments
+    """)
+
+    st.info("📞 Shifa AI Number: +1 (209) 880-3382")
+
+    st.markdown("""
+    ### Example Commands
+
+    • Book an appointment with Dr. Sharma tomorrow at 10 AM.
+
+    • Check availability of Dr. Khan on Monday.
+
+    • Reschedule my appointment to 3 PM.
+
+    • Cancel my appointment for tomorrow.
+    """)
+
+    st.markdown(
+        """
+        <a href="tel:+12098803382">
+            <button style="
                 background-color:#4CAF50;
                 color:white;
                 padding:15px 30px;
@@ -280,20 +305,10 @@ with tab7:
                 border-radius:10px;
                 font-size:18px;
                 cursor:pointer;">
-        📞 Call Shifa AI
-    </button>
-
-    <script>
-      const vapi = new Vapi("{public_key}");
-
-      document
-        .getElementById("callBtn")
-        .addEventListener("click", async () => {{
-            await vapi.start("{assistant_id}");
-        }});
-    </script>
-    """
-
-    components.html(html_code, height=100)
-   
+                📞 Call Shifa AI
+            </button>
+        </a>
+        """,
+        unsafe_allow_html=True
+    )
 
