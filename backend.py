@@ -1,7 +1,7 @@
 # Step1: Import database objects
 
 import datetime as dt
-from sqlalchemy import func
+from sqlalchemy import create_engine, func
 from sqlalchemy.orm import Session
 
 from pydantic import BaseModel
@@ -216,55 +216,72 @@ def appointment_history(db: Session = Depends(get_db)):
 
 import os
 import requests
+from dotenv import load_dotenv
+from fastapi import HTTPException
+
+load_dotenv()
 
 VAPI_API_KEY = os.getenv("VAPI_API_KEY")
-    
+
+VAPI_ASSISTANT_ID = "aa9c10da-7172-4846-92e9-f09e234ccff6"
+VAPI_PHONE_NUMBER_ID = "69129286-91ce-47de-8410-25bcfcd3e0a7"
+
+
 @app.post("/call_shifa/")
 def call_shifa(request: CallRequest):
 
-    if VAPI_API_KEY:
-        print("VAPI_API_KEY starts with:", VAPI_API_KEY[:10])
-    else:
-        print("VAPI_API_KEY is None")
+    if not VAPI_API_KEY:
+        raise HTTPException(
+            status_code=500,
+            detail="VAPI_API_KEY is not configured"
+        )
+
+    phone_number = request.phone_number.strip()
+
+    if not phone_number.startswith("+"):
+        raise HTTPException(
+            status_code=400,
+            detail="Phone number must include country code, e.g. +919876543210"
+        )
+
+    payload = {
+        "assistantId": VAPI_ASSISTANT_ID,
+        "phoneNumberId": VAPI_PHONE_NUMBER_ID,
+        "customer": {
+            "number": phone_number
+        }
+    }
+
     headers = {
         "Authorization": f"Bearer {VAPI_API_KEY}",
         "Content-Type": "application/json"
     }
 
-    payload = {
-        "assistantId": "aa9c10da-7172-4846-92e9-f09e234ccff6",
-        "phoneNumberId": "69129286-91ce-47de-8410-25bcfcd3e0a7",
-        "customer": {
-            "number": request.phone_number
-        }
-    }
+    try:
+        response = requests.post(
+            "https://api.vapi.ai/call",
+            headers=headers,
+            json=payload,
+            timeout=30
+        )
 
-    response = requests.post(
-        "https://api.vapi.ai/call",
-        headers=headers,
-        json=payload
-    )
+        print("Vapi Status:", response.status_code)
+        print("Vapi Response:", response.text)
 
-    print("Vapi Request:", payload)
-    print("Vapi Status:", response.status_code)
-    print("Vapi Response:", response.text)
+        if response.status_code not in [200, 201]:
+            raise HTTPException(
+                status_code=response.status_code,
+                detail=response.text
+            )
 
-    if response.status_code not in [200,201]:
-        return {
-            "error": response.text,
-            "status": response.status_code
-        }
+        return response.json()
 
-    return response.json()
-
+    except requests.RequestException as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Vapi connection failed: {str(e)}"
+        )
 
 
 
-
-import uvicorn
-if __name__ == "__main__":
-    uvicorn.run("backend:app", host="127.0.0.1", port=8000, reload=True)
-
-# Step4: Write actual code for endpoints to interact with the database
-# Step5: Streamlit dashboard (just for testing)
 
