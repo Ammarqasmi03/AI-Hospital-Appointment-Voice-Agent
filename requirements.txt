@@ -1,7 +1,7 @@
 streamlit
 requests
 pandas
-streamlit-option-menu
+streamlit_option_menu
 
 fastapi
 uvicorn
